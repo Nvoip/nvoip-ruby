@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - run: ruby -c lib/nvoip.rb
+      - run: ruby -c lib/nvoip/client.rb
+      - run: for file in examples/*.rb; do ruby -c "$file"; done
+      - run: gem build nvoip-ruby.gemspec

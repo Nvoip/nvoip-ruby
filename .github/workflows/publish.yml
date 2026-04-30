@@ -19,6 +19,6 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
       - run: gem build nvoip-ruby.gemspec
-      - run: gem push nvoip-0.1.0.gem
+      - run: gem push nvoip-*.gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
