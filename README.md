@@ -8,6 +8,12 @@ SDK e exemplos oficiais da [Nvoip](https://www.nvoip.com.br/) para integrar a AP
 
 - Ruby 3.0+
 
+## Instalacao
+
+```bash
+gem install nvoip
+```
+
 ## Configuração
 
 ```bash
