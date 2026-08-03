@@ -17,7 +17,7 @@ permissions:
 jobs:
   rubygems:
     name: Publish to RubyGems
-    runs-on: [self-hosted, Linux, X64, nvoip-ci-public-release]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
