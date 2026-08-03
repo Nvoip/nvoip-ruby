@@ -4,6 +4,12 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to RubyGems after validation
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -11,7 +17,7 @@ permissions:
 jobs:
   rubygems:
     name: Publish to RubyGems
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, nvoip-ci-public-release]
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -19,6 +25,7 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
       - run: gem build nvoip-ruby.gemspec
-      - run: gem push nvoip-*.gem
+      - if: github.event_name == 'release' || inputs.publish
+        run: gem push nvoip-*.gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
