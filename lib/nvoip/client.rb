@@ -23,7 +23,7 @@ module Nvoip
     end
 
     def self.encode_basic_auth(client_id, client_secret)
-      Base64.strict_encode64("#{client_id}:#{client_secret}")
+      Base64.strict_encode64("#{URI.encode_www_form_component(client_id)}:#{URI.encode_www_form_component(client_secret)}")
     end
 
     def create_client_credentials_token
