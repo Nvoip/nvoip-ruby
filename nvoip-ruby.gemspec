@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = "nvoip"
-  spec.version = "3.0.0"
+  spec.version = "3.0.1"
   spec.summary = "SDK Ruby oficial para a API v3 da Nvoip"
   spec.description = "SDK Ruby oficial para integrar OAuth, chamadas, OTP, WhatsApp, SMS e saldo com a API v3 da Nvoip."
   spec.authors = ["Nvoip"]
@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir["lib/**/*", "README.md", "LICENSE", ".env.example"]
   spec.require_paths = ["lib"]
   spec.required_ruby_version = ">= 3.0"
+  spec.add_runtime_dependency "base64", ">= 0.1"
   spec.metadata = {
     "bug_tracker_uri" => "https://github.com/Nvoip/nvoip-ruby/issues",
     "documentation_uri" => "https://nvoip.docs.apiary.io/",
