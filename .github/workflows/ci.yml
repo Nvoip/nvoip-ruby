@@ -19,4 +19,5 @@ jobs:
       - run: ruby -c lib/nvoip.rb
       - run: ruby -c lib/nvoip/client.rb
       - run: for file in examples/*.rb; do ruby -c "$file"; done
+      - run: ruby -Itest test/client_test.rb
       - run: gem build nvoip-ruby.gemspec
