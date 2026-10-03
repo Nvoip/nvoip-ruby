@@ -8,6 +8,8 @@ SDK e exemplos oficiais da [Nvoip](https://www.nvoip.com.br/) para integrar a AP
 
 Esta é uma quebra de compatibilidade: use `create_client_credentials_token` e envie o access token RS256 em `Authorization: Bearer`. O SDK usa `https://api.nvoip.com.br/auth/oauth2/token`; não use `napikey`, password grant ou `/v3/oauth/token`. Para SMS de texto livre, valide antes a política e o template aprovado aplicáveis à sua conta.
 
+Os tokens retornados devem ser consumidos somente pelo backend. Não os registre em logs, commits ou mensagens. Em OTP, `methods` é um objeto, por exemplo `{ sms: true }` para `phoneNumber` ou `{ email: true }` para `email`.
+
 ## Requisitos
 
 - Ruby 3.0+
@@ -27,8 +29,6 @@ cp .env.example .env
 Ou exporte:
 
 ```bash
-export NVOIP_OAUTH_CLIENT_ID="seu_numbersip"
-export NVOIP_OAUTH_CLIENT_SECRET="seu_user_token"
 export NVOIP_OAUTH_CLIENT_ID="seu_client_id"
 export NVOIP_OAUTH_CLIENT_SECRET="seu_client_secret"
 export NVOIP_CALLER="1049"
