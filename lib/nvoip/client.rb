@@ -15,7 +15,7 @@ module Nvoip
   end
 
   class Client
-    def initialize(base_url: "https://api.nvoip.com.br/v2",
+    def initialize(base_url: "https://api.nvoip.com.br/v3",
       oauth_client_id: ENV["NVOIP_OAUTH_CLIENT_ID"], oauth_client_secret: ENV["NVOIP_OAUTH_CLIENT_SECRET"])
       @base_url = base_url.sub(%r{/+$}, "")
       @oauth_client_id = oauth_client_id
@@ -26,14 +26,12 @@ module Nvoip
       Base64.strict_encode64("#{client_id}:#{client_secret}")
     end
 
-    def create_access_token(numbersip:, user_token:)
+    def create_client_credentials_token
       request_form(
         "POST",
-        "/oauth/token",
+        "https://api.nvoip.com.br/auth/oauth2/token",
         {
-          username: numbersip,
-          password: user_token,
-          grant_type: "password"
+          grant_type: "client_credentials"
         },
         {
           "Authorization" => "Basic #{resolve_basic_auth}"
@@ -44,7 +42,7 @@ module Nvoip
     def refresh_access_token(refresh_token:)
       request_form(
         "POST",
-        "/oauth/token",
+        "https://api.nvoip.com.br/auth/oauth2/token",
         {
           grant_type: "refresh_token",
           refresh_token: refresh_token
@@ -59,7 +57,7 @@ module Nvoip
       request("GET", "/balance", headers: auth_headers(access_token))
     end
 
-    def send_sms(number_phone:, message:, flash_sms: false, access_token: nil, napikey: nil)
+    def send_sms(number_phone:, message:, flash_sms: false, access_token:)
       request_json(
         "POST",
         "/sms",
@@ -68,8 +66,7 @@ module Nvoip
           message: message,
           flashSms: flash_sms
         },
-        access_token: access_token,
-        napikey: napikey
+        access_token: access_token
       )
     end
 
@@ -85,12 +82,12 @@ module Nvoip
       )
     end
 
-    def send_otp(payload:, access_token: nil, napikey: nil)
-      request_json("POST", "/otp", payload, access_token: access_token, napikey: napikey)
+    def send_otp(payload:, access_token:)
+      request_json("POST", "/otp", payload, access_token: access_token)
     end
 
-    def check_otp(code:, key:)
-      request("GET", "/check/otp?code=#{URI.encode_www_form_component(code)}&key=#{URI.encode_www_form_component(key)}")
+    def check_otp(code:, key:, access_token:)
+      request("GET", "/check/otp?code=#{URI.encode_www_form_component(code)}&key=#{URI.encode_www_form_component(key)}", headers: auth_headers(access_token))
     end
 
     def list_whatsapp_templates(access_token:)
@@ -109,13 +106,13 @@ module Nvoip
       raise ArgumentError, "Missing OAuth client credentials. Configure oauth_client_id + oauth_client_secret."
     end
 
-    def request_json(method, path, payload, access_token: nil, napikey: nil)
+    def request_json(method, path, payload, access_token:)
       request(
         method,
-        with_napikey(path, napikey),
+        path,
         headers: {
           "Content-Type" => "application/json"
-        }.merge(access_token ? auth_headers(access_token) : {}),
+        }.merge(auth_headers(access_token)),
         body: JSON.generate(payload)
       )
     end
@@ -132,7 +129,7 @@ module Nvoip
     end
 
     def request(method, path, headers: {}, body: nil)
-      uri = URI("#{@base_url}#{path}")
+      uri = URI(path.start_with?("http") ? path : "#{@base_url}#{path}")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = uri.scheme == "https"
       http.read_timeout = 30
@@ -159,13 +156,6 @@ module Nvoip
       raise Error.new(response.code.to_i, payload) if response.code.to_i >= 400
 
       payload
-    end
-
-    def with_napikey(path, napikey)
-      return path if blank?(napikey)
-
-      separator = path.include?("?") ? "&" : "?"
-      "#{path}#{separator}napikey=#{URI.encode_www_form_component(napikey)}"
     end
 
     def auth_headers(access_token)

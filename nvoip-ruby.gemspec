@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
   spec.name = "nvoip"
-  spec.version = "0.1.0"
-  spec.summary = "SDK Ruby oficial para a API v2 da Nvoip"
-  spec.description = "SDK Ruby oficial para integrar OAuth, chamadas, OTP, WhatsApp, SMS e saldo com a API v2 da Nvoip."
+  spec.version = "3.0.0"
+  spec.summary = "SDK Ruby oficial para a API v3 da Nvoip"
+  spec.description = "SDK Ruby oficial para integrar OAuth, chamadas, OTP, WhatsApp, SMS e saldo com a API v3 da Nvoip."
   spec.authors = ["Nvoip"]
   spec.homepage = "https://www.nvoip.com.br/"
   spec.license = "GPL-3.0-only"
