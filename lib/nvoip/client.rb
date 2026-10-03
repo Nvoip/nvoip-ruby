@@ -16,10 +16,11 @@ module Nvoip
 
   class Client
     def initialize(base_url: "https://api.nvoip.com.br/v3",
-      oauth_client_id: ENV["NVOIP_OAUTH_CLIENT_ID"], oauth_client_secret: ENV["NVOIP_OAUTH_CLIENT_SECRET"])
+      oauth_client_id: ENV["NVOIP_OAUTH_CLIENT_ID"], oauth_client_secret: ENV["NVOIP_OAUTH_CLIENT_SECRET"], token_url: "https://api.nvoip.com.br/auth/oauth2/token")
       @base_url = base_url.sub(%r{/+$}, "")
       @oauth_client_id = oauth_client_id
       @oauth_client_secret = oauth_client_secret
+      @token_url = token_url
     end
 
     def self.encode_basic_auth(client_id, client_secret)
@@ -29,7 +30,7 @@ module Nvoip
     def create_client_credentials_token
       request_form(
         "POST",
-        "https://api.nvoip.com.br/auth/oauth2/token",
+        @token_url,
         {
           grant_type: "client_credentials"
         },
@@ -42,7 +43,7 @@ module Nvoip
     def refresh_access_token(refresh_token:)
       request_form(
         "POST",
-        "https://api.nvoip.com.br/auth/oauth2/token",
+        @token_url,
         {
           grant_type: "refresh_token",
           refresh_token: refresh_token
